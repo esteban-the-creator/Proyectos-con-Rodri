@@ -11,56 +11,80 @@ public class AccountManager : MonoBehaviour
     double valorqueResta;
     //string EstaCuenta;
     public InputField nombre;
-    public InputField otroValorRetiro;
+    public InputField valorRetiro;
     public InputField saldoInicial;
     public InputField codigo;
+    public InputField user;
     public Text titular;
     public Text saldo;
-    Cuenta[] cuentasBanco = new Cuenta[10]; //anotación 1
+    public Text notificacion;
+    Dictionary<string,Cuenta> Cuentas = new Dictionary<string, Cuenta>();
+   // Cuenta[] cuentasBanco = new Cuenta[10]; //anotación 1
 
 
 
     public void CrearCuenta()
     {
         Cuenta NuevaCuenta = new Cuenta(System.Convert.ToDouble(saldoInicial.text), nombre.text); // Anotacion 2
-        cuentasBanco[currentIndexAccounts] = NuevaCuenta;
-        currentIndexAccounts++;
-        titular.text = NuevaCuenta.getTitular();
+        Cuentas.Add(NuevaCuenta.getTitular(), NuevaCuenta);
+        
+        /*
+         Líneas para hacer funcionar el código con un array de cuentas.
 
+         * cuentasBanco[currentIndexAccounts] = NuevaCuenta;
+         * currentIndexAccounts++; 
+         
+         */
+        
+
+        // Parte del código que se encarga de cambiar en la UI el titular y el saldo 
+
+        titular.text = NuevaCuenta.getTitular();
         string tempSaldo = NuevaCuenta.getCantidad().ToString();
         saldo.text = tempSaldo;
     }
 
-    public void ConsultarCuenta()
-    {
-        cod = System.Convert.ToInt32(codigo.text);
-        titular.text = cuentasBanco[cod].getTitular();
-        saldo.text = cuentasBanco[cod].getCantidad().ToString();
 
-    }
+    
 
     public void Retirar()
     {
-        cod = System.Convert.ToInt32(codigo.text);
-        valorqueResta = System.Convert.ToDouble(otroValorRetiro.text);
-        double miSaldoActual = System.Convert.ToDouble(saldoInicial.text) ;
-     
+        //cod = System.Convert.ToInt32(codigo.text);
 
-        if (valorqueResta > miSaldoActual)
+
+        if (Cuentas.ContainsKey(user.text))
         {
-            saldo.text = ("No tienes tanto dinero");
+            Cuenta LaCuenta = Cuentas[user.text];
 
-        }
+            valorqueResta = System.Convert.ToDouble(valorRetiro.text);
+                  
+            double miSaldoActual = System.Convert.ToDouble(saldo.text);
 
-        else
-        {
-            double saldoqueQueda = miSaldoActual - valorqueResta;
-            cuentasBanco[cod].setCantidad(saldoqueQueda);
-            saldo.text = cuentasBanco[cod].getCantidad().ToString();
+
+            if (valorqueResta > miSaldoActual)
+            {
+                notificacion.text = ("No tienes tanto dinero");
+
+            }
+
+            else
+            {
+                double saldoqueQueda = miSaldoActual - valorqueResta;
+
+
+                /*cuentasBanco[cod].setCantidad(saldoqueQueda);
+                saldo.text = cuentasBanco[cod].getCantidad().ToString();*/
+            }
         }
+        
 
     }
 }
+
+
+
+
+
 
 /*crear un funcion con el onclick para guardar la información de la cuenta como 
   unanueva y otra funciona que muestra la información de una de las cuentas*/
@@ -80,3 +104,14 @@ clase o atributo del que estoy haciendo un array y en los ultimos corchetes la c
 Una solución efectiva cuando no permite usar inputfield.text (nombre.text en este caso) es usar una variable string (EstaCuenta) 
 y asignarle el valor del input field, luego utilizar el setter de la cuenta instanciada (NuevaCuenta.Set())para asignarle el nombre 
 que se guardó en el string "EstaCuenta", sin embargo usamos el constructor para iniciarlizar el valor */
+
+
+
+
+/* public void ConsultarCuenta()
+ {
+     cod = System.Convert.ToInt32(codigo.text);
+     titular.text = cuentasBanco[cod].getTitular();
+     saldo.text = cuentasBanco[cod].getCantidad().ToString();   
+ }
+*/
